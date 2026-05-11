@@ -15,6 +15,20 @@ This guide focuses on what works when you're running on:
 
 The goal: **high-quality, controlled agent behavior without expensive infrastructure.**
 
+## Focus: Coding Agents
+
+While the principles apply broadly, this guide is optimized for **coding agents** —
+LLM agents that understand, generate, modify, debug, test, and review code.
+
+Coding agents have unique challenges:
+- **Structured output is non-negotiable** — code must be syntactically valid
+- **Context is code, not text** — loading the right files matters more than loading more text
+- **Verification is executable** — you can compile, run tests, and lint to check quality automatically
+- **Project context changes everything** — greenfield scaffolding vs brownfield refactoring are fundamentally different tasks
+
+The [workflows.md](./workflows.md) document maps 16 end-to-end coding workflows across
+10 different project contexts (greenfield, brownfield, monorepo, microservice, etc.).
+
 ## Guide Structure
 
 | Document | What It Covers |
@@ -32,6 +46,7 @@ The goal: **high-quality, controlled agent behavior without expensive infrastruc
 - **In scope:** Techniques, patterns, and practices for running agents locally
 - **In scope:** Trade-offs between model size, quality, and speed
 - **In scope:** Framework-agnostic advice (works with LangChain, LlamaIndex, CrewAI, custom, etc.)
+- **In scope:** Coding-specific workflows (generation, debugging, testing, migration, etc.)
 - **Out of scope:** Cloud deployment, training/fine-tuning deep dives, RAG architecture (unless relevant to agents)
 
 ## Contributing

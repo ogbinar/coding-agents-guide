@@ -34,13 +34,39 @@ Level 5: Multi-agent → Multiple specialized agents coordinating
 
 Not all small models are equal at agentic tasks. Key capabilities matter more than raw benchmark scores.
 
-### Critical Capabilities for Agents
+### Critical Capabilities for General Agents
 
 1. **Instruction following** — Does the model respect system prompts and constraints?
 2. **Tool calling** — Can it reliably format function calls and parse outputs?
 3. **Reasoning depth** — Can it maintain a chain of thought without collapsing?
 4. **Context window** — Can it hold the conversation history + tool outputs?
 5. **Output consistency** — Does it produce parseable, structured output reliably?
+
+### Additional Capabilities for Coding Agents
+
+Coding agents need everything above, plus:
+
+6. **Code syntax fidelity** — Can it generate syntactically valid code in the target language? Even a missing semicolon breaks the workflow.
+7. **API/library knowledge** — Does it know the standard libraries and popular frameworks for the language?
+8. **Diff generation** — Can it produce correct unified diffs for modifying existing files?
+9. **Error message interpretation** — Can it read compiler errors, stack traces, and test failures and map them to code fixes?
+10. **Convention adherence** — Does it follow language-specific style guides (PEP 8, Google JS Style, etc.)?
+
+### Coding-Specific Model Rankings
+
+For coding tasks, the usual benchmark rankings shift. Models strong at general QA may be weak at code, and vice versa:
+
+| Model (Q4) | Coding Strength | Notes |
+|---|---|---|
+| **Qwen2.5-Coder-7B** | ★★★★★ | Purpose-built for code, excellent at multiple languages |
+| **Qwen2.5-Coder-3B** | ★★★★ | Best small coding model, fits in 2GB VRAM |
+| **DeepSeek-Coder-V2-Lite** | ★★★★ | Strong multi-language, good at longer contexts |
+| **Llama-3.1-8B** | ★★★ | Good generalist, decent coding |
+| **Phi-3.5-mini** | ★★★ | Surprisingly capable coder for its size |
+| **CodeQwen1.5-7B** | ★★★ | Older but still solid for Python/JS |
+
+**Key insight:** Purpose-built coding models (Qwen-Coder, DeepSeek-Coder) often outperform
+larger generalist models on coding tasks, even at the same parameter count.
 
 ### Model Recommendations by Tier
 
@@ -163,6 +189,32 @@ Model output:         ~2000 tokens (reserved)
 Total:                ~8000 tokens
 ```
 
+### Code-Specific Context Strategies
+
+Code consumes context differently than natural language. A 200-line Python file
+may be 1500 tokens but contain only ~50 tokens of "semantic information" — the
+rest is syntax, whitespace, and boilerplate.
+
+**Strategies for loading code into context:**
+
+1. **File tree first, content second:** Load the directory structure to understand
+   the project layout, then selectively load files the agent identifies as relevant.
+
+2. **Signature-only loading:** For large files, load only function/class signatures
+   and docstrings, not full implementations. Load full content only for files being modified.
+
+3. **AST-based summarization:** Parse the code into an AST and generate a compact
+   textual summary of the module's structure (imports, classes, functions, dependencies).
+
+4. **Diff-context loading:** When modifying code, load only the functions/methods
+   being changed plus their immediate callers and callees.
+
+5. **Progressive disclosure:** Start with a high-level summary, let the agent
+   request specific files or functions as needed (tool-based file reading).
+
+6. **Language server integration:** Use LSP (Language Server Protocol) to get
+   symbols, definitions, and references without loading full file contents.
+
 ## 6. When to Use Multi-Agent vs Single-Agent
 
 Multi-agent patterns are tempting but expensive.
@@ -204,6 +256,39 @@ def multi_role_agent(task):
 ```
 
 Same sequential latency, but only one model loaded. Quality is often comparable for constrained systems.
+
+### Coding Agent: The Plan-Code-Verify Loop
+
+For coding tasks specifically, the standard ReAct loop is often replaced by a
+**Plan-Code-Verify** pattern that better matches how developers actually work:
+
+```
+┌─────────────────────────────────────────────────────┐
+│              Plan-Code-Verify Loop                  │
+│                                                     │
+│  1. PLAN:  Analyze task, read relevant files,       │
+│            outline the approach                     │
+│            ↓                                        │
+│  2. CODE:  Generate the code (file writes, diffs)   │
+│            ↓                                        │
+│  3. VERIFY: Run linter → Run tests → Run build      │
+│            ↓                                        │
+│  4. FIX:   If verification fails, diagnose the      │
+│            error and go back to CODE                │
+│            ↓                                        │
+│  5. COMMIT: When green, generate commit message     │
+│            and stage changes                        │
+│                                                     │
+│  Max cycles: 5 (hard limit to prevent infinite loops)│
+└─────────────────────────────────────────────────────┘
+```
+
+**Why this works better than ReAct for coding:**
+- The verification step is **objective** (tests pass/fail, linter clean/dirty)
+  rather than subjective (did the model think it's done?)
+- Each cycle produces a **concrete artifact** (code file) that can be reviewed
+- The loop terminates on **external signals** (green build) not internal confidence
+- Failed cycles leave the codebase in a known state (uncommitted changes)
 
 ## 7. Framework Choices
 

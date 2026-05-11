@@ -361,6 +361,174 @@ def compare_prompts(prompt_a, prompt_b, test_cases):
     return {"prompt_a": score_a, "prompt_b": score_b}
 ```
 
+## 10. Coding-Specific Prompt Patterns
+
+### Code Generation with Constraints
+
+```
+Write a {language} function that {description}.
+
+Context:
+- This is part of a {framework/language} project
+- The project uses {conventions: e.g., PEP 8, snake_case, etc.}
+- Available dependencies: {list}
+- Do NOT use: {restricted libraries/patterns}
+
+Requirements:
+1. Type hints on all parameters and return values
+2. Docstring in {style} format
+3. Handle these edge cases: {list}
+4. No external dependencies beyond: {list}
+5. Include inline comments for non-obvious logic
+
+Return ONLY the code. No explanation, no markdown fences.
+```
+
+### Code Modification via Diff
+
+```
+Modify the following code to {change description}.
+
+Current code (file: {path}):
+{code}
+
+Return a unified diff showing the changes. Use this format:
+--- a/{path}
++++ b/{path}
+@@ -X,Y +A,B @@
+-removed line
++added line
+
+Rules:
+- Only change what is necessary
+- Preserve all existing comments and docstrings
+- Keep the same indentation style
+- If the change requires adding imports, show that in the diff too
+```
+
+### Debugging Prompt
+
+```
+The following code produces this error:
+
+Code:
+{code}
+
+Error:
+{error_message_or_stack_trace}
+
+Analyze the error:
+1. What is the direct cause of this error?
+2. What is the root cause in the code?
+3. What is the minimal fix?
+
+Return your analysis and the fixed code as a diff.
+```
+
+### Code Review Prompt
+
+```
+Review the following code for issues. Categorize findings:
+
+🔴 Critical: Bugs, security vulnerabilities, data loss
+🟡 Warning: Performance issues, maintainability concerns
+🔵 Suggestion: Style improvements, best practices
+
+Code (file: {path}):
+{code}
+
+For each finding, provide:
+- Line number(s)
+- Category (🔴/🟡/🔵)
+- Description of the issue
+- Suggested fix (code snippet)
+
+If no issues found, say "No issues found." Do not manufacture problems.
+```
+
+### Test Generation Prompt
+
+```
+Write tests for the following {language} code using {test framework}.
+
+Code:
+{code}
+
+Test requirements:
+- Cover the happy path (normal usage)
+- Cover edge cases: {list specific edge cases}
+- Cover error cases: invalid inputs, exceptions, boundary values
+- Use descriptive test names: test_{function}_{scenario}
+- Each test should be independent (no shared state)
+- Include setup/teardown where needed
+
+Return ONLY the test code.
+```
+
+### Architecture/Design Prompt
+
+```
+Design a {type: API / service / module / CLI tool} for {purpose}.
+
+Constraints:
+- Language: {language}
+- Framework: {framework}
+- Must integrate with: {existing systems}
+- Deployment target: {environment}
+- Team size: {size} (affects complexity tolerance)
+
+Provide:
+1. High-level architecture (text diagram)
+2. Module/file structure (directory tree)
+3. Key interfaces and data models
+4. Technology choices with brief justification
+5. Potential risks and mitigations
+```
+
+### Brownfield Onboarding Prompt
+
+```
+I am working in an existing codebase. Here is the project structure:
+
+{file_tree}
+
+Here are the key configuration files:
+{configs}
+
+Analyze this project and tell me:
+1. What language, framework, and major libraries does it use?
+2. What is the entry point and general architecture?
+3. What are the coding conventions (naming, style, patterns)?
+4. How are tests organized and run?
+5. How is the project built and deployed?
+6. What are the most complex or risky parts to modify?
+
+Be specific and reference actual file names from the structure.
+```
+
+## 11. Prompt Patterns by Project Context
+
+### Greenfield (New Project)
+
+- Emphasize architecture decisions and scaffolding
+- Provide framework-specific conventions upfront
+- Ask for complete, runnable code (not snippets)
+- Include setup instructions and README generation
+
+### Brownfield (Existing Project)
+
+- Load project context before asking for changes
+- Ask for diffs, not full file rewrites
+- Reference existing patterns and conventions
+- Ask the agent to identify related files that might need changes
+
+### Migration (Code Transformation)
+
+- Provide both source and target examples (few-shot)
+- Specify what must be preserved (behavior, API contracts)
+- Ask for incremental migration steps, not all-at-once
+- Include test preservation strategy
+
 ---
 
 *See also: [agents.md](./agents.md) for core principles, [tool-use.md](./tool-use.md) for tool calling patterns.*

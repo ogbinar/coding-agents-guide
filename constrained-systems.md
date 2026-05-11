@@ -256,6 +256,28 @@ Beyond raw token speed, measure:
 3. **Success rate at temperature** — How often does the agent produce valid output?
 4. **Iterations to completion** — Average loop count per task
 
+### Coding Agent-Specific Benchmarks
+
+Coding agents have unique resource patterns:
+
+1. **Context-heavy operations:** Reading multiple source files can consume 3–5K tokens
+   per file. A brownfield task modifying 3 files in a medium project may need 16K+ context.
+   **Implication:** You may need a model with 32K context window, which doubles KV cache memory.
+
+2. **Long output generation:** A single function implementation can be 50–200 tokens.
+   A full file can be 1000–5000 tokens. Slow generation (2 tok/s on CPU) means
+   a 500-line file takes 4+ minutes to generate.
+   **Implication:** Batch/async workflows matter more for coding than chat.
+
+3. **Iterative verification loops:** The Plan-Code-Verify loop may run 3–5 cycles.
+   Each cycle involves: read files → generate code → run command → read output → fix.
+   **Implication:** Total task time = iterations × (context_load + generation + tool_exec).
+   Optimize context loading as much as generation speed.
+
+4. **Model switching cost:** If using different models for different roles
+   (coder vs reviewer), loading/unloading models between calls adds latency.
+   **Implication:** Keep one model loaded; use prompt switching instead.
+
 ## 9. Practical Hardware Recommendations
 
 ### Budget Builds for Local Agents

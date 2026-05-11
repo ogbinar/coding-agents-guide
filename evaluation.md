@@ -16,6 +16,20 @@
 | **Error recovery rate** | % of failures that self-recover | > 50% |
 | **Context utilization** | % of context window used effectively | 60–80% |
 
+### Coding-Specific Metrics
+
+| Metric | What It Tells You | Target |
+|---|---|---|
+| **Syntax validity** | % of generated code that parses without errors | > 95% |
+| **Test pass rate** | % of generated tests that pass on first run | > 80% |
+| **Diff accuracy** | % of diffs that apply cleanly without conflicts | > 90% |
+| **API hallucination** | % of code referencing non-existent APIs/methods | < 3% |
+| **Import correctness** | % of imports that resolve to real modules | > 95% |
+| **Build success** | % of modifications that compile/build successfully | > 85% |
+| **Lint cleanliness** | % of generated code passing linter on first pass | > 70% |
+| **Fix convergence** | Avg iterations to go from error → green build | < 4 |
+| **Regression rate** | % of changes that break previously passing tests | < 5% |
+
 ### Quality Dimensions
 
 ```
@@ -325,7 +339,104 @@ BENCHMARKS = {
 ═══════════════════════════════════════════════════════
 ```
 
-## 8. Continuous Improvement Loop
+## 8. Coding-Specific Evaluation Methods
+
+### Executable Verification (The Gold Standard)
+
+Unlike general agents where you need an LLM-as-judge, coding agents can be
+evaluated **objectively** because code either works or it doesn't.
+
+```python
+def evaluate_code_output(generated_code, language, test_suite=None):
+    results = {}
+
+    # 1. Syntax check
+    results["syntax_valid"] = check_syntax(generated_code, language)
+
+    # 2. Import resolution
+    if results["syntax_valid"]:
+        results["imports_valid"] = check_imports(generated_code, language)
+
+    # 3. Lint check
+    if results["syntax_valid"]:
+        results["lint_clean"] = run_linter(generated_code, language)
+
+    # 4. Type check (if applicable)
+    if language in ["python", "typescript", "rust"]:
+        results["type_clean"] = run_type_check(generated_code, language)
+
+    # 5. Test execution
+    if test_suite:
+        results["tests_pass"] = run_tests(test_suite)
+        results["coverage"] = get_coverage(test_suite)
+
+    # 6. Build check
+    results["builds"] = run_build()
+
+    return results
+```
+
+### Diff Quality Evaluation
+
+For code modification tasks, evaluate the quality of generated diffs:
+
+```python
+def evaluate_diff(original_code, modified_code, expected_diff):
+    generated_diff = create_diff(original_code, modified_code)
+
+    # Does the diff apply cleanly?
+    applies_cleanly = apply_diff(original_code, generated_diff) is not None
+
+    # Does the result match expected behavior?
+    result = apply_diff(original_code, generated_diff)
+    behavior_preserved = run_tests(result) == run_tests(expected_diff)
+
+    # Is the diff minimal (only changed what was needed)?
+    change_ratio = count_changed_lines(generated_diff) / count_total_lines(original_code)
+    is_minimal = change_ratio < 0.3  # Less than 30% of file changed
+
+    return {
+        "applies_cleanly": applies_cleanly,
+        "behavior_preserved": behavior_preserved,
+        "is_minimal": is_minimal,
+        "change_ratio": change_ratio,
+    }
+```
+
+### Workflow-Specific Evaluation Scenarios
+
+Build test scenarios that match the 16 workflows from workflows.md:
+
+```python
+WORKFLOW_TESTS = {
+    "code_generation": {
+        "prompt": "Write a Python function that parses CSV and returns a list of dicts",
+        "verify": [check_syntax, check_imports, run_unit_tests],
+    },
+    "debugging": {
+        "setup": "Plant a known bug in a working function",
+        "prompt": "Fix the bug: {error_message}",
+        "verify": [check_bug_fixed, check_no_regressions],
+    },
+    "refactoring": {
+        "setup": "Provide a function that violates SRP",
+        "prompt": "Refactor this function to follow single responsibility",
+        "verify": [check_behavior_preserved, check_lint, check_tests_still_pass],
+    },
+    "test_writing": {
+        "setup": "Provide a function without tests",
+        "prompt": "Write comprehensive tests for this function",
+        "verify": [tests_run, coverage_above_threshold, edge_cases_covered],
+    },
+    "migration": {
+        "setup": "Provide callback-based JavaScript code",
+        "prompt": "Convert this to async/await",
+        "verify": [behavior_preserved, modern_syntax, tests_pass],
+    },
+}
+```
+
+## 9. Continuous Improvement Loop
 
 ```
 ┌─────────────────────────────────────────────┐

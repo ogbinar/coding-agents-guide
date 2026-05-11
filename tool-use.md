@@ -322,7 +322,80 @@ def safe_execute(command, timeout=10):
     return result.stdout
 ```
 
-## 8. Testing Tool Use
+## 8. Coding Agent Tool Catalog
+
+Beyond generic tools, coding agents need a specialized toolset.
+Here is a practical catalog organized by workflow phase.
+
+### Discovery and Understanding
+
+| Tool | Signature | Purpose |
+|---|---|---|
+| `list_dir` | `(path: string, max_depth: number)` | Explore project structure |
+| `read_file` | `(path: string, start_line?: number, end_line?: number)` | Read file (with line range for large files) |
+| `search_files` | `(pattern: string, path?: string)` | Glob-based file search |
+| `grep` | `(pattern: string, path?: string, language?: string)` | Text search across codebase |
+| `get_symbols` | `(path: string)` | Extract function/class signatures from a file |
+| `get_dependencies` | `(path: string)` | List imports/dependencies of a file |
+| `read_config` | `(type: "package.json" \| "tsconfig" \| "docker" \| ...)` | Read project config files |
+
+### Code Modification
+
+| Tool | Signature | Purpose |
+|---|---|---|
+| `write_file` | `(path: string, content: string)` | Create or overwrite a file |
+| `apply_diff` | `(path: string, diff: string)` | Apply a unified diff to an existing file |
+| `insert_lines` | `(path: string, start_line: number, lines: string[])` | Insert lines at a specific position |
+| `replace_lines` | `(path: string, start: number, end: number, lines: string[])` | Replace a range of lines |
+
+### Verification
+
+| Tool | Signature | Purpose |
+|---|---|---|
+| `run_command` | `(command: string, timeout: number)` | Execute shell command (sandboxed) |
+| `run_tests` | `(path?: string, filter?: string)` | Run test suite (optional path/filter) |
+| `run_linter` | `(path?: string)` | Run linter on file or project |
+| `run_type_check` | `(path?: string)` | Run type checker (my pyright, tsc --noEmit) |
+| `check_build` | `()` | Run the project build |
+
+### Version Control
+
+| Tool | Signature | Purpose |
+|---|---|---|
+| `git_diff` | `(path?: string)` | Show uncommitted changes |
+| `git_status` | `()` | Show working tree status |
+| `git_commit` | `(message: string, files?: string[])` | Stage and commit changes |
+| `git_log` | `(n: number, path?: string)` | Show recent commits |
+| `git_blame` | `(path: string, start: number, end: number)` | Show who changed specific lines |
+
+### Design Principles for Coding Tools
+
+1. **Line-range reads:** `read_file` should support `start_line`/`end_line` so the agent
+   can read specific functions without loading entire files
+2. **Diff-based writes:** Prefer `apply_diff` over `write_file` for modifications —
+   it preserves parts of the file the agent didn't think about
+3. **Sandboxed execution:** `run_command` should have strict allowlists and timeouts
+4. **Structured output:** Tools return structured results, not raw text dumps
+5. **Idempotent operations:** Tools should be safe to call multiple times
+
+### Example: Minimal Coding Agent Tool Set
+
+For a constrained system with a small model, start with just 8 tools:
+
+```
+1. read_file(path, start?, end?)    — Read code
+2. list_dir(path)                    — Navigate project
+3. grep(pattern, path?)              — Search codebase
+4. write_file(path, content)         — Write/modify files
+5. run_command(cmd, timeout)         — Build/test/lint (sandboxed)
+6. git_diff(path?)                   — See changes
+7. git_commit(message)               — Save work
+8. search_files(pattern)             — Find files by name
+```
+
+This covers 80% of coding workflows. Add more tools only when you hit specific gaps.
+
+## 9. Testing Tool Use
 
 ### Unit Tests for Tools
 
