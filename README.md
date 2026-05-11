@@ -23,6 +23,7 @@ The goal: **high-quality, controlled agent behavior without expensive infrastruc
 | [constrained-systems.md](./constrained-systems.md) | Hardware constraints, quantization, inference optimization |
 | [prompt-patterns.md](./prompt-patterns.md) | Prompt techniques for quality and control |
 | [tool-use.md](./tool-use.md) | Tool/function calling strategies for small models |
+| [workflows.md](./workflows.md) | End-to-end coding agent workflows and topic roadmap |
 | [evaluation.md](./evaluation.md) | Measuring and improving agent quality |
 | [references.md](./references.md) | Papers, tools, frameworks, and further reading |
 
