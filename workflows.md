@@ -8,10 +8,34 @@ This document maps **what coding agents actually do** (workflows) against
 
 ---
 
+## Project Contexts: Where the Agent Operates
+
+Before the workflows, understand the **context** — the nature of the codebase
+and project dramatically changes what the agent needs to do.
+
+| Context | Description | Agent Challenges |
+|---|---|---|
+| **Greenfield** | New project, no existing code | Agent defines architecture, conventions, structure from scratch |
+| **Brownfield** | Existing codebase, legacy code | Agent must understand, respect, and navigate existing patterns |
+| **Spaček / Script** | Single-file scripts, one-off tools | Fast, focused, no architecture needed |
+| **Library / Package** | Shared code with public API | Agent must preserve API contracts, versioning, backward compat |
+| **Monorepo** | Multiple projects in one repo | Agent navigates cross-project dependencies, shared configs |
+| **Service / Microservice** | Networked services with contracts | Agent understands APIs, schemas, inter-service calls |
+| **Data / ML Pipeline** | Notebooks, data processing, training | Agent handles data schemas, experiment tracking, reproducibility |
+| **Infrastructure / DevOps** | Docker, Terraform, CI/CD, configs | Agent works with declarative configs, not traditional code |
+| **Embedded / Systems** | C, Rust, firmware, constrained targets | Agent deals with memory, hardware, build toolchains |
+| **Research / Prototyping** | Exploratory code, rapid iteration | Agent tolerates messiness, focuses on speed over polish |
+
+**Why this matters:** A greenfield agent can make architectural decisions.
+A brownfield agent must reverse-engineer them. The same "code generation"
+workflow looks completely different in each context.
+
+---
+
 ## Part A: End-to-End Core Workflows
 
 These are the complete workflows a coding agent performs, from start to finish.
-Each workflow is a self-contained capability that builds on the previous ones.
+Organized by **phase of the development lifecycle**, not just by task type.
 
 ### Workflow 1: Project Understanding & Context Loading
 
@@ -223,6 +247,237 @@ Each workflow is a self-contained capability that builds on the previous ones.
 
 ---
 
+### Workflow 9: Architecture and Scaffolding
+
+> The agent designs and bootstraps a new project or major component.
+
+**Steps:**
+1. Understand the requirements and constraints
+2. Choose architecture (framework, patterns, structure)
+3. Generate project scaffold (directories, configs, boilerplate)
+4. Set up build system, linter, formatter, CI
+5. Create initial module/service structure
+6. Document the architectural decisions
+
+**Key techniques needed:**
+- Architecture pattern knowledge (MVC, clean arch, hexagonal, etc.)
+- Framework conventions and best practices
+- Config file generation (package.json, tsconfig, docker-compose, etc.)
+- Decision documentation (ADR-style)
+- Multi-file coordinated generation
+
+**Contexts:** Primarily greenfield, but also brownfield (new module in existing project)
+
+**Failure modes:**
+- Over-engineering simple projects
+- Choosing wrong framework/architecture for the domain
+- Inconsistent conventions across scaffolded files
+- Missing essential configs (secrets, env, CI)
+
+---
+
+### Workflow 10: Code Migration and Modernization
+
+> The agent migrates code between languages, frameworks, or major versions.
+
+**Steps:**
+1. Analyze the source code and understand its behavior
+2. Understand the target (new language, framework version, platform)
+3. Map source constructs to target equivalents
+4. Generate migrated code
+5. Port and adapt tests
+6. Validate behavior is preserved
+7. Handle incremental migration (strangler pattern)
+
+**Key techniques needed:**
+- Cross-language semantic understanding
+- API mapping (old → new)
+- Breaking change detection
+- Incremental migration strategies
+- Behavior preservation verification
+
+**Contexts:** Brownfield almost exclusively
+
+**Common migrations:**
+- Language: Python 2→3, JS→TS, Java→Kotlin
+- Framework: jQuery→React, Django 1→4, AngularJS→Angular
+- Platform: Monolith→microservices, server→edge
+- Build: Webpack→Vite, Maven→Gradle
+
+**Failure modes:**
+- Semantic drift (migrated code behaves differently)
+- Missing edge cases in the mapping
+- Not migrating related files (configs, tests, docs)
+- All-or-nothing approach instead of incremental
+
+---
+
+### Workflow 11: Dependency and Package Management
+
+> The agent manages dependencies, resolves conflicts, and audits packages.
+
+**Steps:**
+1. Audit current dependencies (versions, vulnerabilities, duplicates)
+2. Identify updates needed (security, features, compatibility)
+3. Plan the upgrade path (breaking changes, order of operations)
+4. Update dependency files and code that uses them
+5. Run tests to verify compatibility
+6. Lock versions and document changes
+
+**Key techniques needed:**
+- Understanding dependency graphs
+- Semantic versioning and breaking change detection
+- Package manager tool use (npm, pip, cargo, go mod)
+- Vulnerability scanning interpretation
+- Conflict resolution strategies
+
+**Failure modes:**
+- Blindly updating everything → cascade of breakage
+- Missing transitive dependency issues
+- Not updating code that depends on changed APIs
+- Ignoring lock file implications
+
+---
+
+### Workflow 12: Configuration and Environment Setup
+
+> The agent creates, debugs, and manages project configuration and environments.
+
+**Steps:**
+1. Understand the target environment (dev, staging, production, Docker, cloud)
+2. Generate or fix configuration files
+3. Set up environment variables and secrets management
+4. Configure CI/CD pipelines
+5. Debug environment-specific issues
+
+**Key techniques needed:**
+- Config file formats (YAML, JSON, TOML, HCL, INI)
+- Environment variable patterns and secrets management
+- Docker/container configuration
+- CI/CD pipeline syntax (GitHub Actions, GitLab CI, Jenkins)
+- Cloud platform configs (AWS, GCP, Azure, K8s manifests)
+
+**Failure modes:**
+- Hardcoded secrets in config files
+- Environment-specific bugs (works on my machine)
+- Misconfigured CI/CD that silently passes
+- Inconsistent configs across environments
+
+---
+
+### Workflow 13: Data Schema and Query Workflows
+
+> The agent works with databases, data schemas, migrations, and queries.
+
+**Steps:**
+1. Understand the data model and schema
+2. Write or optimize queries (SQL, GraphQL, NoSQL)
+3. Generate schema migrations
+4. Design data access layers (ORM, repositories)
+5. Handle data transformations and ETL logic
+
+**Key techniques needed:**
+- SQL query generation and optimization
+- Schema design and normalization
+- Migration file generation (up/down pairs)
+- ORM mapping (Prisma, SQLAlchemy, TypeORM, etc.)
+- Data validation and seeding
+
+**Contexts:** Full-stack apps, data pipelines, analytics
+
+**Failure modes:**
+- N+1 query problems
+- Destructive migrations without backups
+- Schema drift (code and DB out of sync)
+- SQL injection in generated queries
+
+---
+
+### Workflow 14: API Design and Contract Generation
+
+> The agent designs APIs, generates clients, and maintains contracts.
+
+**Steps:**
+1. Define API requirements and constraints
+2. Design endpoints, schemas, and data models
+3. Generate server-side implementation scaffolding
+4. Generate client SDKs or types
+5. Create OpenAPI/JSON Schema specs
+6. Generate mock servers for development
+
+**Key techniques needed:**
+- REST/GraphQL/gRPC design patterns
+- OpenAPI/Swagger spec generation
+- Type generation from specs (openapi-typescript, etc.)
+- Versioning strategies
+- Contract testing
+
+**Failure modes:**
+- Inconsistent API design patterns
+- Generated client out of sync with server
+- Missing error response definitions
+- Poor versioning leading to breaking changes
+
+---
+
+### Workflow 15: Performance Profiling and Optimization
+
+> The agent identifies and fixes performance bottlenecks.
+
+**Steps:**
+1. Run profiling tools and capture metrics
+2. Analyze profiles to identify bottlenecks
+3. Categorize the issue (CPU, memory, I/O, network, algorithm)
+4. Propose and implement optimizations
+5. Re-profile and verify improvement
+6. Document the optimization and its trade-offs
+
+**Key techniques needed:**
+- Profiling tool interpretation (flame graphs, traces, logs)
+- Algorithm complexity analysis
+- Caching strategies
+- Database query optimization
+- Memory leak detection
+- Language-specific optimization patterns
+
+**Failure modes:**
+- Premature optimization
+- Optimizing the wrong bottleneck
+- Trading readability for marginal gains
+- Introducing bugs during optimization
+
+---
+
+### Workflow 16: Incident Response and Hotfix
+
+> The agent helps diagnose and fix production issues under time pressure.
+
+**Steps:**
+1. Parse incident report (error logs, monitoring alerts, user reports)
+2. Triage severity and impact
+3. Locate the root cause in the codebase
+4. Write a minimal, safe fix
+5. Write a regression test
+6. Generate a rollback plan
+7. Document the incident and fix
+
+**Key techniques needed:**
+- Log analysis and pattern matching
+- Monitoring/alert interpretation
+- Minimal-change fix strategy (surgical, not refactoring)
+- Rollback planning
+- Post-mortem documentation
+
+**Contexts:** Brownfield, production environments
+
+**Failure modes:**
+- Over-reaching fixes that introduce new issues
+- Not writing regression tests
+- No rollback plan
+- Blaming instead of diagnosing
+
+---
+
 ## Part B: Logical Topic Groupings
 
 These are the cross-cutting concerns and foundational topics that support
@@ -337,28 +592,106 @@ all workflows above.
 - Temperature and sampling for code (low temp for correctness)
 - Constrained decoding for code structure
 
+### Topic 13: Project Context Adaptation
+
+- Greenfield vs brownfield agent behavior differences
+- Codebase onboarding strategies (how the agent learns a new project)
+- Convention detection and adherence
+- Legacy code handling (comments, patterns, technical debt)
+- Monorepo navigation and cross-project awareness
+- Framework-specific agent knowledge loading
+
+### Topic 14: Human-Agent Collaboration Patterns
+
+- Agent as pair programmer (suggest, human decides)
+- Agent as autonomous worker (full task execution)
+- Agent as reviewer (human writes, agent critiques)
+- Approval gates and human-in-the-loop checkpoints
+- Communication patterns (what the agent explains vs does silently)
+- Trust calibration (when to trust the agent vs verify)
+
+### Topic 15: State and Session Management
+
+- Multi-session continuity (resuming work across days)
+- Change tracking (what the agent has already done)
+- Undo/rollback of agent-made changes
+- Branch-per-task workflows
+- Work-in-progress saving and recovery
+- Context handoff between sessions
+
+### Topic 16: Domain-Specific Agent Knowledge
+
+- Web development (HTML/CSS/JS, frameworks, deployment)
+- Backend services (APIs, databases, caching, queues)
+- Mobile development (iOS, Android, cross-platform)
+- Data science / ML (notebooks, pipelines, experiments)
+- DevOps / SRE (infrastructure, monitoring, incident response)
+- Security (vulnerability scanning, secure coding patterns)
+- Embedded / systems programming (memory, hardware, toolchains)
+
+### Topic 17: Output Delivery and Integration
+
+- How the agent delivers its work (file writes, diffs, patches, PRs)
+- IDE plugin integration
+- Terminal/CLI agent interfaces
+- Git integration (commits, branches, PR descriptions)
+- CI/CD pipeline integration
+- Chat-based interfaces (Slack, Discord, Teams)
+- Headless/API mode for automation
+
 ---
 
 ## Part C: Suggested Expansion Priority
 
 Based on impact vs effort for constrained systems:
 
-| Priority | Workflow / Topic | Why |
+### Foundational (Build These First)
+
+| Priority | Item | Why |
 |---|---|---|
 | **P0** | Workflow 2: Code Generation | Core capability, highest demand |
 | **P0** | Topic 1: Model Selection | Foundation for everything else |
 | **P0** | Topic 3: Structured Code Output | Without this, nothing is usable |
-| **P1** | Workflow 4: Debugging | High value, different from generation |
+| **P0** | Topic 13: Project Context Adaptation | Greenfield vs brownfield changes everything |
+
+### High-Leverage (Build Next)
+
+| Priority | Item | Why |
+|---|---|---|
+| **P1** | Workflow 4: Debugging | High value, fundamentally different from generation |
 | **P1** | Topic 4: Tool Ecosystem | Tools enable all workflows |
 | **P1** | Topic 12: Prompt Engineering for Code | Biggest leverage for quality |
+| **P1** | Workflow 1: Project Understanding | Brownfield work starts here |
+
+### Quality Loop (Build After Core Works)
+
+| Priority | Item | Why |
+|---|---|---|
 | **P2** | Workflow 5: Test Writing | Closes the quality loop |
 | **P2** | Workflow 8: Build-Run-Iterate | Full autonomy requires this |
 | **P2** | Topic 5: Self-Correction Loops | Quality multiplier |
+| **P2** | Workflow 9: Architecture/Scaffolding | Greenfield projects need this |
+| **P2** | Topic 15: State and Session Management | Multi-session work requires it |
+
+### Production-Ready (Build When Core is Solid)
+
+| Priority | Item | Why |
+|---|---|---|
 | **P3** | Workflow 6: Code Review | Adds value but needs solid generation first |
+| **P3** | Workflow 10: Migration | High-value but complex |
+| **P3** | Workflow 11: Dependency Management | Often overlooked, high pain |
 | **P3** | Topic 7: Evaluation | Need to measure before optimizing |
-| **P3** | Topic 6: Security | Critical for production, less for dev |
-| **P4** | Topic 8: Multi-Agent | Premature optimization for constrained systems |
-| **P4** | Topic 10: Memory | Nice-to-have, complex to implement well |
+| **P3** | Topic 6: Security | Critical for production |
+| **P3** | Workflow 16: Incident Response | High-stakes, specific patterns |
+
+### Advanced (Nice-to-Have)
+
+| Priority | Item | Why |
+|---|---|---|
+| **P4** | Topic 8: Multi-Agent | Premature for constrained systems |
+| **P4** | Topic 10: Memory across sessions | Complex, diminishing returns |
+| **P4** | Workflow 15: Performance Optimization | Specialized, needs profiling expertise |
+| **P4** | Topic 17: Output Delivery / Integration | Depends on deployment context |
 
 ---
 
