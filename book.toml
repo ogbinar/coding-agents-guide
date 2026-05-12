@@ -1,0 +1,12 @@
+[book]
+title = "Agentic Guide: Local LLM Agents on Constrained Systems"
+authors = ["Myk Ogbinar"]
+language = "en"
+text-direction = "ltr"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/ogbinar/coding-agents-guide"
+site-url = "/coding-agents-guide/"
