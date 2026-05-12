@@ -1,54 +1,159 @@
-# Agentic Guide: Local LLM Agents on Constrained Systems
+# Agentic Guide: AI Coding on Constrained Systems
 
-A living guide collecting best practices for building, running, and controlling
-LLM-based agents on local and resource-constrained systems.
+> A practical guide for using AI coding agents on your laptop, consumer GPU, or CPU-only machine.
 
-## Why This Guide
+---
 
-Most agentic frameworks and tutorials assume cloud GPUs and large models (70B+).
-This guide focuses on what works when you're running on:
+## Who This Is For
 
-- Consumer GPUs (8–24 GB VRAM)
-- CPU-only systems
-- Edge devices and laptops
-- Quantized models (4-bit, 3-bit, even 2-bit)
+You're a developer who:
+- Wants AI to help you code, but doesn't have cloud GPU budgets
+- Runs on consumer hardware (laptop, used GPU, CPU-only)
+- Is comfortable coding but new to local LLMs and agents
+- Thinks in terms of "what can I build?" not "what's the architecture?"
 
-The goal: **high-quality, controlled agent behavior without expensive infrastructure.**
+**This guide gets you coding with AI in 30 minutes, not 3 weeks.**
 
-## Focus: Coding Agents
+---
 
-While the principles apply broadly, this guide is optimized for **coding agents** —
-LLM agents that understand, generate, modify, debug, test, and review code.
+## Quick Start (30 Minutes)
 
-Coding agents have unique challenges:
-- **Structured output is non-negotiable** — code must be syntactically valid
-- **Context is code, not text** — loading the right files matters more than loading more text
-- **Verification is executable** — you can compile, run tests, and lint to check quality automatically
-- **Project context changes everything** — greenfield scaffolding vs brownfield refactoring are fundamentally different tasks
+Don't read the whole book. Just do this:
 
-The [workflows.md](./workflows.md) document maps 16 end-to-end coding workflows across
-10 different project contexts (greenfield, brownfield, monorepo, microservice, etc.).
+1. **Install Ollama** — `curl -fsSL https://ollama.com/install.sh | sh`
+2. **Pull a model** — `ollama pull qwen2.5-coder:7b` (or smaller if you have <8GB RAM)
+3. **Run your first AI-coded function** — See [Quick Start](./00-quick-start/01-first-function.md)
 
-## Guide Structure
+That's it. You'll have AI writing code before you've read a single chapter of theory.
 
-| Document | What It Covers |
+---
+
+## The Guide
+
+### Quick Start (30 min)
+Get AI writing code immediately. No theory.
+
+- [Chapter 0: Your First AI-Coded Function](00-quick-start/01-first-function.md)
+
+### Part 1: Beginner — Do Things
+Use AI to do real coding tasks. Learn by doing.
+
+- [Chapter 1: Write New Code with AI](01-beginner/01-write-code.md)
+- [Chapter 2: Debug and Fix Bugs](01-beginner/02-debug-fix.md)
+- [Chapter 3: Write Tests](01-beginner/03-write-tests.md)
+- [Chapter 4: Review and Improve Code](01-beginner/04-review-improve.md)
+- [Chapter 5: The Full Loop](01-beginner/05-full-loop.md)
+
+### Part 2: Understand — How It Works
+Now that you've seen it work, understand what's happening.
+
+- [Chapter 6: How Your Agent Thinks](02-understand/01-how-agents-think.md)
+- [Chapter 7: Tools — How Your Agent Reads Files](02-understand/02-tools.md)
+- [Chapter 8: Context — Why Your Agent Forgets](02-understand/03-context.md)
+- [Chapter 9: Don't Build What You Don't Need](02-understand/04-what-not-to-build.md)
+
+### Part 3: Advanced — Better Results
+You've hit quality walls. Learn the patterns that separate good from great.
+
+- [Chapter 10: Better Prompts](03-advanced/01-better-prompts.md)
+- [Chapter 11: When Things Go Wrong](03-advanced/02-failure-modes.md)
+- [Chapter 12: Greenfield vs Brownfield](03-advanced/03-greenfield-brownfield.md)
+- [Chapter 13: Refactoring and Migration](03-advanced/04-refactor-migrate.md)
+- [Chapter 14: Patterns That Work](03-advanced/05-patterns.md)
+- [Chapter 15: Working Long-Term](03-advanced/06-long-term.md)
+
+### Part 4: Daily Driver — Make It Yours
+Build the personal setup that becomes your daily workflow.
+
+- [Chapter 16: Your Setup](04-daily-driver/01-your-setup.md)
+- [Chapter 17: Models and Quantization](04-daily-driver/02-models-quantization.md)
+- [Chapter 18: Squeezing Performance](04-daily-driver/03-performance.md)
+- [Chapter 19: Quality Checks](04-daily-driver/04-quality-checks.md)
+- [Chapter 20: Trust and Safety](04-daily-driver/05-trust-and-safety.md)
+
+### Reference
+Lookup, not read linearly.
+
+- [Models](reference/models.md) — Recommendation matrix by hardware
+- [Engines](reference/engines.md) — Install commands for every platform
+- [Tools Catalog](reference/tools-catalog.md) — The 24 essential coding agent tools
+- [Prompt Templates](reference/prompt-templates.md) — Copy-paste system prompts
+- [Troubleshooting](reference/troubleshooting.md) — Symptom → cause → fix
+- [Glossary](reference/glossary.md) — Terms explained simply
+
+---
+
+## Running Projects
+
+This guide uses **2 running projects** so you build a cumulative portfolio:
+
+- **Project A (CLI Tool):** A small command-line utility you build from scratch (greenfield)
+- **Project B (Open-Source):** An existing project you contribute to (brownfield)
+
+Each chapter's exercise advances one of these projects.
+
+---
+
+## Why Local?
+
+Most AI coding guides assume cloud GPUs and expensive APIs. This guide focuses on:
+
+- **Consumer GPUs** (8–24 GB VRAM)
+- **CPU-only systems** (yes, it works)
+- **Quantized models** (4-bit, 3-bit, even 2-bit)
+- **Offline work** (privacy, cost, no internet required)
+
+The goal: **high-quality AI-assisted coding without expensive infrastructure.**
+
+---
+
+## What Makes This Different
+
+| Other Guides | This Guide |
 |---|---|
-| [agents.md](./agents.md) | Core principles of local agentic systems |
-| [constrained-systems.md](./constrained-systems.md) | Hardware constraints, quantization, inference optimization |
-| [prompt-patterns.md](./prompt-patterns.md) | Prompt techniques for quality and control |
-| [tool-use.md](./tool-use.md) | Tool/function calling strategies for small models |
-| [workflows.md](./workflows.md) | End-to-end coding agent workflows and topic roadmap |
-| [evaluation.md](./evaluation.md) | Measuring and improving agent quality |
-| [references.md](./references.md) | Papers, tools, frameworks, and further reading |
+| Cloud-first, assume A100 access | Local-first, assume laptop |
+| Teach you to build agents | Teach you to use agents |
+| Theory before practice | Practice in 30 minutes |
+| Generic examples | Coding-specific workflows |
+| 34 chapters of theory | 20 chapters + reference |
+| Isolated exercises | Running projects A/B/C |
 
-## Scope
+---
 
-- **In scope:** Techniques, patterns, and practices for running agents locally
-- **In scope:** Trade-offs between model size, quality, and speed
-- **In scope:** Framework-agnostic advice (works with LangChain, LlamaIndex, CrewAI, custom, etc.)
-- **In scope:** Coding-specific workflows (generation, debugging, testing, migration, etc.)
-- **Out of scope:** Cloud deployment, training/fine-tuning deep dives, RAG architecture (unless relevant to agents)
+## Companion Repo
+
+A companion GitHub repo contains:
+- Working code for all exercises
+- Project A/B/C starter code and solutions
+- Ready-to-use prompt templates
+- Evaluation test suites
+
+[Link to companion repo — coming soon]
+
+---
 
 ## Contributing
 
 This is a living document. Add sections, refactor, and expand as the landscape evolves.
+
+---
+
+## Archive
+
+Original research documents that informed this guide are archived in [`archive/`](./archive/):
+
+- `agents.md` — Agent architectures and loops
+- `constrained-systems.md` — Low-resource hardware considerations
+- `evaluation.md` — Evaluation strategies and metrics
+- `prompt-patterns.md` — Prompt engineering patterns
+- `references.md` — References and resources
+- `tool-use.md` — Tool use and function calling
+- `workflows.md` — Coding workflows and patterns
+
+These are kept for reference but the content has been integrated into the main guide.
+
+---
+
+## License
+
+This guide is open source. Feel free to use, share, and adapt.

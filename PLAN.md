@@ -23,71 +23,63 @@ offline work.
 
 ---
 
+## Core Design Decisions
+
+- **Value first, mechanics later.** Quick Start delivers a "wow" moment in 30 minutes. Theory comes after the reader has experienced utility.
+- **Agent user, not agent builder.** Exercises are "use AI to write a script," not "build an agent loop from scratch."
+- **Plan-Code-Verify from Day 1.** Not ReAct-then-swap. The right loop for coding is taught upfront.
+- **Hardware awareness woven throughout.** "On Your Hardware" callout boxes in every chapter. Deep dive comes later.
+- **20 chapters, not 34.** Merged overlapping topics, cut builder-centric content, deferred advanced material to reference.
+- **2 running projects.** A greenfield CLI tool and a brownfield contribution, threaded across chapters so the reader builds a cumulative portfolio.
+
+---
+
 ## Site Structure
 
 ```
 agentic-guide/
-├── README.md                  # Landing page / home
-├── PLAN.md                    # This file
-├── WORKS.md                   # Quick-start: "Make something work today"
+├── README.md                    # Landing page / home
+├── PLAN.md                      # This file
+├── WORKS.md                     # Quick-start: "Make something work today"
 │
-├── 01-setup/                  # Part 1: Get Running
-│   ├── 01-what-you-need.md
-│   ├── 02-choose-a-model.md
-│   ├── 03-install-an-engine.md
-│   └── 04-your-first-agent.md
+├── 00-quick-start/              # Quick Start (30 min)
+│   └── 01-first-function.md     # Chapter 0
 │
-├── 02-core/                   # Part 2: How Agents Think
-│   ├── 01-the-agent-loop.md
-│   ├── 02-tools-and-actions.md
-│   ├── 03-context-is-everything.md
-│   └── 04-when-agents-fail.md
+├── 01-beginner/                 # Part 1: Beginner — Do Things
+│   ├── 01-write-code.md         # Chapter 1
+│   ├── 02-debug-fix.md          # Chapter 2
+│   ├── 03-write-tests.md        # Chapter 3
+│   ├── 04-review-improve.md     # Chapter 4
+│   └── 05-full-loop.md          # Chapter 5
 │
-├── 03-workflows/              # Part 3: What Agents Can Do
-│   ├── 01-generate-code.md
-│   ├── 02-debug-and-fix.md
-│   ├── 03-write-tests.md
-│   ├── 04-review-and-improve.md
-│   ├── 05-refactor-and-migrate.md
-│   └── 06-the-full-loop.md
+├── 02-understand/               # Part 2: Understand — How It Works
+│   ├── 01-how-agents-think.md   # Chapter 6
+│   ├── 02-tools.md              # Chapter 7
+│   ├── 03-context.md            # Chapter 8
+│   └── 04-what-not-to-build.md  # Chapter 9
 │
-├── 04-control/                # Part 4: Getting Better Output
-│   ├── 01-system-prompts.md
-│   ├── 02-few-shot-examples.md
-│   ├── 03-structured-output.md
-│   ├── 04-temperature-and-sampling.md
-│   └── 05-guardrails.md
+├── 03-advanced/                 # Part 3: Advanced — Better Results
+│   ├── 01-better-prompts.md     # Chapter 10
+│   ├── 02-failure-modes.md      # Chapter 11
+│   ├── 03-greenfield-brownfield.md  # Chapter 12
+│   ├── 04-refactor-migrate.md   # Chapter 13
+│   ├── 05-patterns.md           # Chapter 14
+│   └── 06-long-term.md          # Chapter 15
 │
-├── 05-constrained/            # Part 5: Making It Work on Less
-│   ├── 01-quantization.md
-│   ├── 02-memory-management.md
-│   ├── 03-speed-optimization.md
-│   ├── 04-cpu-only-survival.md
-│   └── 05-budget-builds.md
+├── 04-daily-driver/             # Part 4: Daily Driver — Make It Yours
+│   ├── 01-your-setup.md         # Chapter 16
+│   ├── 02-models-quantization.md # Chapter 17
+│   ├── 03-performance.md        # Chapter 18
+│   ├── 04-quality-checks.md     # Chapter 19
+│   └── 05-trust-and-safety.md   # Chapter 20
 │
-├── 06-patterns/               # Part 6: Patterns That Work
-│   ├── 01-plan-code-verify.md
-│   ├── 02-fake-multi-agent.md
-│   ├── 03-greenfield-vs-brownfield.md
-│   ├── 04-self-correction.md
-│   ├── 05-session-memory.md
-│   └── 06-human-in-the-loop.md
-│
-├── 07-eval/                   # Part 7: Knowing It's Good
-│   ├── 01-measure-what-matters.md
-│   ├── 02-test-your-agent.md
-│   ├── 03-debugging-failures.md
-│   └── 04-improvement-loop.md
-│
-├── 08-reference/              # Part 8: Quick Reference
-│   ├── models.md
-│   ├── engines.md
-│   ├── tools-catalog.md
-│   ├── prompt-templates.md
-│   ├── troubleshooting.md
-│   └── glossary.md
-│
-└── workflows.md               # Master workflow map (existing)
+└── reference/                   # Reference (lookup, not read linearly)
+    ├── models.md
+    ├── engines.md
+    ├── tools-catalog.md
+    ├── prompt-templates.md
+    ├── troubleshooting.md
+    └── glossary.md
 ```
 
 ---
@@ -100,279 +92,193 @@ agentic-guide/
 
 ---
 
-### Part 1: Get Running (Week 1)
+### Quick Start (30 Minutes)
 
-> Goal: Have a working coding agent on your machine by the end of this part.
+> Goal: AI writes you a function that runs, before you've read a chapter.
 
-**Chapter 1: What You Actually Need**
-- Hardware reality check: what runs on what
-- The VRAM/RAM/cores decision tree
-- "I only have a laptop" — yes, that's fine
-- Software prerequisites (keep it minimal)
-
-**Chapter 2: Choose a Model**
-- Model size vs capability explained simply
-- Coding models vs general models — why it matters
-- Quantization demystified: what does "Q4" actually mean for your code?
-- Recommendation matrix by your hardware
-- Where to download models (trusted sources)
-
-**Chapter 3: Install an Inference Engine**
-- Engine comparison: llama.cpp, Ollama, LM Studio — which one for you?
-- Step-by-step install for your platform (Linux, macOS, Windows)
-- GPU setup (NVIDIA, AMD, Apple Silicon)
-- CPU-only setup
-- Smoke test: run your first prompt
-
-**Chapter 4: Your First Coding Agent**
-- From zero to a working agent in under an hour
-- The minimal agent loop (code you can copy-paste)
-- Your first task: "Write a Python function that..."
-- Your first tool: file reading
-- Your first verification: does the code actually run?
-- Exercise: build a simple code generation agent
+**Chapter 0: Your First AI-Coded Function**
+- Install one tool (Ollama, opinionated default)
+- Pull one model (recommendation based on hardware self-assessment)
+- Write one function with AI help, run it
+- "On Your Hardware" callout: what to download if you have 8GB RAM, 16GB RAM, GPU, CPU-only
+- No theory, no explanation of how it works yet
+- Project A seed: start the CLI tool project with its first function
 
 ---
 
-### Part 2: How Agents Think (Week 2)
+### Part 1: Beginner — Do Things (Chapters 1–5)
 
-> Goal: Understand what's happening inside so you can debug and improve.
+> Goal: Use AI to do real coding tasks. Learn by doing. Theory comes later.
 
-**Chapter 5: The Agent Loop**
-- Think → Act → Observe → Repeat (with diagrams)
-- Why the loop matters more than the model
-- Max iterations and early exit
-- State management: what the agent remembers
-- Exercise: trace an agent loop by hand
-
-**Chapter 6: Tools and Actions**
-- What tools are and why agents need them
-- The 8 essential tools every coding agent needs
-- Designing tools small models can actually use
-- Tool output management (don't blow your context)
-- Exercise: add a new tool to your agent
-
-**Chapter 7: Context Is Everything**
-- The context window explained (it's RAM for your model)
-- Token budgets: where your context goes
-- Loading code efficiently (don't load the whole repo)
-- Progressive disclosure: load what you need, when you need it
-- Exercise: optimize context usage for a real task
-
-**Chapter 8: When Agents Fail**
-- The 10 most common failure modes (with real examples)
-- How to recognize each failure mode
-- Recovery strategies for each
-- When to blame the prompt vs the model vs the tools
-- Exercise: diagnose and fix a broken agent run
-
----
-
-### Part 3: What Agents Can Do (Weeks 3–4)
-
-> Goal: Use your agent for real coding workflows.
-
-**Chapter 9: Generate Code**
+**Chapter 1: Write New Code with AI**
 - From description to working code
-- Greenfield: scaffolding a new project
+- How to ask for what you want (coding-specific prompt patterns)
+- Greenfield scaffolding: starting a new project
 - Specifying constraints that actually work
-- Self-review before you even look
-- Exercise: generate a complete module from a spec
+- Self-review before you even look at the output
+- Project A: scaffold the CLI tool project structure
+- "On Your Hardware" callout: model size vs code quality tradeoffs
 
-**Chapter 10: Debug and Fix**
+**Chapter 2: Debug and Fix Bugs**
 - Feeding error messages to your agent
-- Root cause vs symptom (teaching the agent the difference)
 - The debugging loop: error → hypothesis → fix → verify
+- Root cause vs symptom (teaching the agent the difference)
 - When the agent makes things worse
-- Exercise: fix a planted bug using only your agent
+- Project A: debug a planted bug in the CLI tool
+- Project B introduced: pick an open-source project to contribute to
 
-**Chapter 11: Write Tests**
+**Chapter 3: Write Tests**
 - Generating tests from existing code
 - Happy path, edge cases, error cases
 - Running and fixing failing tests
 - Coverage targets for agent-generated tests
-- Exercise: achieve 80% coverage on a module
+- Project A: achieve 80% coverage on a module
+- Project B: add tests to an existing function
 
-**Chapter 12: Review and Improve**
+**Chapter 4: Review and Improve Code**
 - Code review prompts that catch real issues
 - Categorizing findings (critical / warning / suggestion)
 - Style enforcement vs substance
 - Performance anti-pattern detection
-- Exercise: review and improve a piece of your own code
+- Project A: review and improve the CLI tool
+- Project B: submit a review of an existing PR
 
-**Chapter 13: Refactor and Migrate**
+**Chapter 5: The Full Loop**
+- Plan → Code → Verify → Fix → Commit (the core loop, taught as practice)
+- Putting all workflows together from Chapters 1–4
+- When to stop iterating
+- Git integration and commit messages
+- Project A: complete a full feature from spec to commit
+- Project B: complete a small contribution
+
+---
+
+### Part 2: Understand — How It Works (Chapters 6–9)
+
+> Goal: Now that you've seen it work, understand what's happening underneath.
+
+**Chapter 6: How Your Agent Thinks**
+- The Plan-Code-Verify loop explained (the loop you've been using, now named)
+- Why this loop beats ReAct for coding tasks
+- Max iterations and early exit (when to stop the agent)
+- State management: what the agent remembers between turns
+- Trace an agent loop by hand on a real example from Project A
+
+**Chapter 7: Tools — How Your Agent Reads Files and Runs Commands**
+- What tools are and why agents need them
+- The 8 essential tools every coding agent uses
+- Tool output management (don't blow your context)
+- How existing tools (Aider, Continue) handle this under the hood
+- No tool design exercises — just understanding what your agent is doing
+
+**Chapter 8: Context — Why Your Agent Forgets Things**
+- The context window explained (it's RAM for your model)
+- Token budgets: where your context goes
+- Loading code efficiently (don't load the whole repo)
+- Progressive disclosure: load what you need, when you need it
+- "On Your Hardware" callout: context window size vs available RAM
+
+**Chapter 9: Don't Build What You Don't Need**
+- When a simple prompt is enough (no agent needed)
+- When an existing tool (Aider, Continue, OpenCode) solves your problem
+- Why multi-agent is almost never the answer for beginners
+- The "good enough" agent vs the "perfect" agent
+- Complexity ladder: start simple, add complexity only when you hit a wall
+- Saves readers months of wasted effort
+
+---
+
+### Part 3: Advanced — Better Results (Chapters 10–15)
+
+> Goal: You've hit quality walls. Now learn the patterns that separate good results from great ones.
+
+**Chapter 10: Better Prompts**
+- System prompts: anatomy of a great one, coding-specific templates
+- Few-shot examples: why examples beat instructions for small models
+- Structured output: JSON vs XML vs diffs, getting small models to comply
+- Temperature and sampling: what actually matters for coding tasks
+- Project A: improve a failing prompt with examples and structure
+
+**Chapter 11: When Things Go Wrong**
+- The 10 most common failure modes (with real examples from Projects A/B)
+- How to recognize each failure mode
+- Recovery strategies for each
+- When to blame the prompt vs the model vs the tools vs the hardware
+- Project B: diagnose and fix a broken agent run on the brownfield project
+
+**Chapter 12: Greenfield vs Brownfield**
+- How context changes everything between new and existing code
+- Codebase onboarding strategies
+- Convention detection and adherence
+- Legacy code handling
+- Project B: adapt your agent for the open-source codebase conventions
+
+**Chapter 13: Refactoring and Migration**
 - Safe refactoring with diffs
 - Framework migrations (with real examples)
 - Incremental migration strategies
 - Preserving behavior during transformation
-- Exercise: migrate a small module to a new pattern
+- Project C introduced: migrate a small module (e.g., JS to TS)
 
-**Chapter 14: The Full Loop**
-- Plan → Code → Verify → Fix → Commit
-- Putting all workflows together
-- When to stop iterating
-- Git integration and commit messages
-- Exercise: complete a full feature from spec to commit
-
----
-
-### Part 4: Getting Better Output (Week 5)
-
-> Goal: Systematically improve the quality of your agent's output.
-
-**Chapter 15: System Prompts**
-- Anatomy of a great system prompt
-- Coding-specific system prompts (copy-paste ready)
-- Greenfield vs brownfield prompt differences
-- Iterating on your system prompt
-- Exercise: write and test a system prompt from scratch
-
-**Chapter 16: Few-Shot Examples**
-- Why examples beat instructions for small models
-- Writing effective few-shot examples for code
-- Matching examples to your actual use cases
-- Maintaining an example library
-- Exercise: improve a failing prompt with examples
-
-**Chapter 17: Structured Output**
-- JSON vs XML vs diffs — choosing the right format
-- Getting small models to produce parseable output
-- Constrained decoding (grammar-based output)
-- Post-processing and recovery
-- Exercise: build a reliable structured output pipeline
-
-**Chapter 18: Temperature and Sampling**
-- What temperature actually does (with code examples)
-- Temperature guide by task type
-- When to use randomness vs determinism
-- Reproducibility and seeding
-- Exercise: find the sweet spot for your model
-
-**Chapter 19: Guardrails**
-- Input sanitization (prevent prompt injection)
-- Output validation (catch bad output before it's used)
-- Tool execution safety (sandboxing)
-- When to add a human approval gate
-- Exercise: add guardrails to your agent
-
----
-
-### Part 5: Making It Work on Less (Week 6)
-
-> Goal: Squeeze maximum quality from minimum hardware.
-
-**Chapter 20: Quantization**
-- Quantization explained without the math
-- Q4 vs Q5 vs Q8 — what you actually lose
-- Coding capability degradation curve
-- Finding and testing quantized models
-- Exercise: compare Q4, Q5, Q8 on your actual tasks
-
-**Chapter 21: Memory Management**
-- KV cache explained simply
-- Layer offloading (GPU + CPU hybrid)
-- Context window strategies for code
-- When to upgrade hardware vs optimize software
-- Exercise: fit a bigger model into your VRAM
-
-**Chapter 22: Speed Optimization**
-- Tokens per second: what's acceptable?
-- Prefix caching and prompt reuse
-- Speculative decoding (draft model + main model)
-- Thread count tuning
-- Exercise: double your generation speed
-
-**Chapter 23: CPU-Only Survival**
-- Yes, you can do this on CPU
-- Best models and engines for CPU
-- Expectation setting (speed, quality, what's practical)
-- Async and batch patterns for slow inference
-- Exercise: build a usable agent on CPU-only
-
-**Chapter 24: Budget Builds**
-- GPU buying guide for local agents (2025)
-- Used market picks (RTX 3090, etc.)
-- Cloud rental for when you need a boost
-- Raspberry Pi and SBC experiments
-- Exercise: plan your hardware upgrade path
-
----
-
-### Part 6: Patterns That Work (Week 7)
-
-> Goal: Learn the patterns that separate good agents from great ones.
-
-**Chapter 25: Plan-Code-Verify**
-- Why this loop beats ReAct for coding
-- Implementation with real code
-- Convergence detection (when to stop)
-- Exercise: implement Plan-Code-Verify
-
-**Chapter 26: Fake Multi-Agent**
-- Role-switching with a single model
-- Coder → Reviewer → Revisor pattern
-- When real multi-agent makes sense
-- Exercise: build a fake multi-agent code reviewer
-
-**Chapter 27: Greenfield vs Brownfield**
-- How context changes everything
-- Codebase onboarding strategies
-- Convention detection and adherence
-- Legacy code handling
-- Exercise: adapt your agent for a new codebase
-
-**Chapter 28: Self-Correction**
-- Compile-and-fix loops
-- Test-driven generation
+**Chapter 14: Patterns That Work**
+- Fake multi-agent: role-switching with a single model (Coder → Reviewer → Revisor)
+- Self-correction: compile-and-fix loops, test-driven generation
 - Multi-pass refinement
-- Cost of verification vs benefit
-- Exercise: add self-correction to your agent
+- When real multi-agent actually makes sense
+- Project C: apply self-correction to the migration
 
-**Chapter 29: Session Memory**
+**Chapter 15: Working Long-Term**
 - Resuming work across sessions
-- Change tracking and undo
 - Branch-per-task workflows
-- Exercise: build session persistence
-
-**Chapter 30: Human-in-the-Loop**
-- Approval gates for risky operations
+- Human-in-the-loop: approval gates for risky operations
 - Pair programming mode vs autonomous mode
-- Trust calibration
-- Exercise: add human approval to your agent
+- Project A/B/C: tie up loose ends with session persistence and git hygiene
 
 ---
 
-### Part 7: Knowing It's Good (Week 8)
+### Part 4: Daily Driver — Make It Yours (Chapters 16–20)
 
-> Goal: Measure, debug, and continuously improve your agent.
+> Goal: Build the personal setup, workflows, and intuition that become your daily driver for AI-assisted coding.
 
-**Chapter 31: Measure What Matters**
-- Coding-specific metrics (syntax validity, diff accuracy, etc.)
-- Setting up basic monitoring
-- Token budgets and cost tracking
-- Exercise: instrument your agent
+**Chapter 16: Your Setup**
+- Choosing your daily driver tool (Aider, Continue, OpenCode, or custom)
+- VS Code integration, terminal workflows
+- Building your prompt library and example collection
+- Your model lineup: which model for which task
+- Project A/B/C: set up your permanent workspace
 
-**Chapter 32: Test Your Agent**
-- Building a golden test dataset
-- Workflow-specific test scenarios
-- Automated evaluation with executable verification
-- Exercise: write 10 evaluation tests
+**Chapter 17: Models and Quantization**
+- Model size vs capability explained simply
+- Quantization without the math: what does "Q4" actually mean for your code?
+- Coding capability degradation curve
+- Recommendation matrix by your hardware tier
+- Where to download models (trusted sources)
+- "On Your Hardware" deep dive: which model to run, when
 
-**Chapter 33: Debugging Failures**
-- Failure analysis template
-- Common patterns and their fixes
-- When to change the prompt vs the model vs the tools
-- Exercise: fix 3 failing test cases
+**Chapter 18: Squeezing Performance**
+- Memory management: KV cache, layer offloading, GPU + CPU hybrid
+- Speed optimization: tokens/sec, prefix caching, thread count tuning
+- CPU-only survival: yes, you can do this
+- Budget builds: GPU buying guide, used market picks, cloud rental
+- When to upgrade hardware vs optimize software
 
-**Chapter 34: The Improvement Loop**
-- Evaluate → Analyze → Hypothesize → Implement → Re-evaluate
-- Regression detection
-- Documenting what works and why
-- Exercise: complete one improvement cycle
+**Chapter 19: Quality Checks**
+- Simple heuristics: does the code run? do the tests pass?
+- The "5-minute test": give your agent the same task 3 times, compare
+- When to upgrade your model vs fix your prompts
+- Red flags that mean your setup is fundamentally broken
+- Regression detection for your personal workflow
+
+**Chapter 20: Trust and Safety**
+- Input sanitization: prevent prompt injection in your code
+- Output validation: catch bad output before it's used
+- Tool execution safety: sandboxing, approval gates
+- Trust calibration: when to let the agent run vs when to stay in the loop
+- Social aspects: explaining AI-assisted work to collaborators
 
 ---
 
-### Part 8: Quick Reference
+### Reference (Lookup, Not Read Linearly)
 
 > Tear-out pages. Copy-paste ready.
 
@@ -385,6 +291,25 @@ agentic-guide/
 
 ---
 
+## Running Projects
+
+### Project A: CLI Tool (Greenfield)
+- A small command-line utility the reader builds from scratch
+- Follows the reader from Quick Start through Part 3
+- Each chapter's exercise advances this project
+- By end of Part 1, the reader has a working tool with tests
+
+### Project B: Open-Source Contribution (Brownfield)
+- Reader picks an existing open-source project
+- Introduced in Chapter 2 (Debug), deepens in Chapter 12 (Brownfield)
+- Teaches convention detection, PR workflows, legacy code handling
+
+### Project C: Migration Task (Introduced in Advanced)
+- e.g., JavaScript to TypeScript, or framework migration
+- Introduced in Chapter 13, uses self-correction and multi-pass patterns
+
+---
+
 ## Content Principles
 
 ### Writing Style
@@ -393,14 +318,16 @@ agentic-guide/
 - **Progressive disclosure:** Simple answer first, deep dive in expandable sections
 - **Real failures:** Show what actually breaks, not just happy paths
 - **Copy-paste friendly:** Code blocks should work as-is
+- **"On Your Hardware" callouts:** Every chapter includes a hardware-aware sidebar
 
 ### Each Chapter Should Have
 1. **TL;DR** — 3 bullet points, what you'll learn
 2. **Prerequisites** — What chapters to read first (if any)
 3. **Core content** — Concepts, examples, diagrams
 4. **Common pitfalls** — What goes wrong and how to fix it
-5. **Exercise** — Hands-on task with expected outcome
-6. **Further reading** — Links to references.md entries
+5. **Exercise** — Hands-on task advancing a running project
+6. **On Your Hardware** — Hardware-aware callout box
+7. **Further reading** — Links to reference section
 
 ### Diagrams
 - ASCII diagrams for loops and architectures (render in terminal and browser)
@@ -421,14 +348,12 @@ agentic-guide/
 Site: agentic-guide.local (or agentic-guide.dev)
 
 /                     → Landing page (README.md adapted)
-/setup/               → Part 1 chapters
-/core/                → Part 2 chapters
-/workflows/           → Part 3 chapters
-/control/             → Part 4 chapters
-/constrained/         → Part 5 chapters
-/patterns/            → Part 6 chapters
-/eval/                → Part 7 chapters
-/reference/           → Part 8 quick reference
+/quick-start/         → Chapter 0
+/beginner/            → Part 1 chapters
+/understand/          → Part 2 chapters
+/advanced/            → Part 3 chapters
+/daily-driver/        → Part 4 chapters
+/reference/           → Quick reference
 
 Static site generator: MkDocs Material or Astro
 - Sidebar navigation with collapsible parts
@@ -442,26 +367,30 @@ Static site generator: MkDocs Material or Astro
 
 ## Production Plan
 
-### Phase 1: Core Content (Weeks 1–3)
-Write Parts 1–3 (chapters 1–14). This gets a reader from zero to
-a working agent that can generate, debug, and test code.
+### Phase 1: Quick Start + Beginner (Weeks 1–2)
+Write Quick Start + Part 1 (Chapters 0–5). This is the minimum viable
+book — gets a reader from zero to a working agent that can generate,
+debug, test, review, and commit code. Ship this as v0.1.
 
-### Phase 2: Quality and Control (Weeks 4–5)
-Write Parts 4–5 (chapters 15–24). This teaches how to improve output
-and make it work on constrained hardware.
+### Phase 2: Understand (Weeks 3–4)
+Write Part 2 (Chapters 6–9). Explains the mechanics behind what the
+reader has already been doing. Includes "Don't Build What You Don't Need."
 
-### Phase 3: Advanced Patterns (Weeks 6–7)
-Write Parts 6–7 (chapters 25–34). Patterns, evaluation, improvement.
+### Phase 3: Advanced (Weeks 5–6)
+Write Part 3 (Chapters 10–15). Better prompts, failure modes,
+brownfield work, refactoring, patterns, long-term workflows.
 
-### Phase 4: Reference and Polish (Week 8)
-Write Part 8 quick reference. Cross-link everything. Add exercises.
-Set up the website.
+### Phase 4: Daily Driver (Weeks 7–8)
+Write Part 4 (Chapters 16–20). Personal setup, models, performance,
+quality checks, trust and safety.
 
-### Phase 5: Companion Repo
+### Phase 5: Reference and Polish (Week 9)
+Write reference section. Cross-link everything. Set up the website.
+
+### Phase 6: Companion Repo
 Create a companion GitHub repo with:
 - Working agent implementations for each pattern
-- Evaluation test suites
-- Model comparison scripts
+- Project A/B/C starter code and solutions
 - Ready-to-use prompt templates
 
 ---
@@ -472,16 +401,35 @@ Current files map to chapters as follows:
 
 | Current File | Maps To Chapters |
 |---|---|
-| `agents.md` | Ch 5, 8, 25, 26 |
-| `constrained-systems.md` | Ch 1, 3, 20–24 |
-| `prompt-patterns.md` | Ch 15–19 |
-| `tool-use.md` | Ch 6, Ref: Tools Catalog |
-| `evaluation.md` | Ch 31–34 |
-| `workflows.md` | Ch 9–14, 27 |
+| `agents.md` | Ch 6, 9, 14, 15 |
+| `constrained-systems.md` | Ch 0 (callout), 17, 18 |
+| `prompt-patterns.md` | Ch 1, 10, Ref: Prompt Templates |
+| `tool-use.md` | Ch 7, Ref: Tools Catalog |
+| `evaluation.md` | Ch 11, 19 |
+| `workflows.md` | Ch 1–5, 12, 13 |
 | `references.md` | Ref: Models, Engines, Glossary |
 
 Each chapter will pull relevant content from these files and expand it
-with beginner-friendly explanations, exercises, and real examples.
+with beginner-friendly explanations, exercises tied to running projects,
+and "On Your Hardware" callout boxes.
+
+---
+
+## Changes from Original Plan
+
+| | Original | Revised |
+|---|---|---|
+| Chapters | 34 | 20 |
+| Structure | 8 parts | Quick Start + 4 parts + reference |
+| First value | Chapter 4 (Week 1) | Chapter 0 (30 min) |
+| Agent loop | ReAct → Plan-Code-Verify at Week 7 | Plan-Code-Verify from Chapter 0 |
+| Hardware | Siloed in Part 5 (Week 6) | Callouts everywhere + deep dive in Part 4 |
+| Exercises | Isolated builder tasks | Running projects A/B/C |
+| Evaluation | 4 chapters, PhD-level | 1 chapter, lightweight self-check |
+| Focus | Agent builder | Agent user |
+| New | — | Chapter 9: Don't Build What You Don't Need |
+| New | — | Chapter 20: Trust and Safety |
+| New | — | Part 4: Daily Driver (personalization, long-term use) |
 
 ---
 
